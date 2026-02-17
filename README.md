@@ -62,8 +62,12 @@ A single-page wedding website built with HTML5, CSS3, and JavaScript. It was cre
 ```
 bodita/
 ├── index.html          # Main page
-├── config.example.js   # Template for secrets (copy to config.js)
-├── config.js           # Your credentials (gitignored — create from example)
+├── .env.example        # Env template (copy to .env — gitignored)
+├── .env                # Your credentials (gitignored)
+├── config.js           # Generated from .env at build (gitignored)
+├── scripts/
+│   └── build-config.js # Generates config.js from env vars
+├── package.json        # build, vercel-build, dev scripts
 ├── css/
 │   ├── style.css       # Custom styles
 │   ├── bootstrap.css   # Bootstrap framework
@@ -85,48 +89,75 @@ bodita/
 
 ## Local Development
 
-1. **Clone or download** the project.
-2. **Create your config** (required for RSVP and Zoom):
+Same config flow as Vercel — **env vars everywhere**:
+
+1. **Install dependencies** (for the build script):
 
    ```bash
-   cp config.example.js config.js
+   npm install
    ```
 
-   Edit `config.js` and add your Firebase and Zoom credentials.  
-   **`config.js` is gitignored** — it will never be committed. This keeps your credentials out of the repo.
-
-3. **Serve locally** with any static server:
+2. **Create `.env`** from the template:
 
    ```bash
-   # Using Python
-   python3 -m http.server 8000
-
-   # Using Node.js (npx)
-   npx serve .
+   cp .env.example .env
    ```
 
-4. Open `http://localhost:8000` (or the port your server uses).
+   Edit `.env` and add your Firebase and Zoom credentials.  
+   **`.env` is gitignored** — never committed.
 
-### Config Template (`config.example.js`)
+3. **Build** (generates `config.js` from your env vars):
+
+   ```bash
+   npm run build
+   ```
+
+4. **Serve** the site:
+
+   ```bash
+   npm run dev
+   # or: npx serve .   or   python3 -m http.server 8000
+   ```
+
+5. Open `http://localhost:3000` (or 8000 if using Python).
+
+### Environment Variables (`.env.example`)
 
 | Variable | Purpose |
 |----------|---------|
-| `firebase.*` | RSVP form — stores confirmations in Firestore. Required for RSVP. |
-| `zoom.meetingUrl` | Full Zoom join link (with `?pwd=...` if needed) |
-| `zoom.meetingId` | Meeting ID (e.g. `XXX XXX XXXX`) |
-| `zoom.password` | Meeting password |
+| `FIREBASE_*` | RSVP form — stores confirmations in Firestore |
+| `ZOOM_MEETING_URL` | Full Zoom join link (with `?pwd=...` if needed) |
+| `ZOOM_MEETING_ID` | Meeting ID |
+| `ZOOM_PASSWORD` | Meeting password |
 
-**Security notes:**
-
-- **Firebase client config** is intended to be public; access is controlled via [Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started). Ensure your `confirmados` collection has appropriate rules.
-- **Zoom credentials** should be kept private. Never commit real values — use `config.js` (gitignored).
+**Security:** Firebase client config is public by design; access is via [Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started). Zoom credentials should stay private.
 
 ### Firebase Setup (RSVP)
 
 1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com).
 2. Enable **Firestore** and create a `confirmados` collection.
-3. Copy your config from Project Settings → Your apps into `config.js`.
+3. Copy your config from Project Settings → Your apps into `.env` (same keys as Vercel).
 4. Configure [Firestore security rules](https://firebase.google.com/docs/firestore/security/get-started) for `confirmados`.
+
+### Deploy to Vercel
+
+Same env vars as local — add them in Vercel Dashboard → Settings → Environment Variables:
+
+   | Variable | Description |
+   |----------|-------------|
+   | `FIREBASE_API_KEY` | Firebase API key |
+   | `FIREBASE_AUTH_DOMAIN` | e.g. `your-project.firebaseapp.com` |
+   | `FIREBASE_DATABASE_URL` | e.g. `https://your-project.firebaseio.com` |
+   | `FIREBASE_PROJECT_ID` | Firebase project ID |
+   | `FIREBASE_STORAGE_BUCKET` | e.g. `your-project.appspot.com` |
+   | `FIREBASE_MESSAGING_SENDER_ID` | Messaging sender ID |
+   | `FIREBASE_APP_ID` | Firebase app ID |
+   | `FIREBASE_MEASUREMENT_ID` | Analytics measurement ID (optional) |
+   | `ZOOM_MEETING_URL` | Full Zoom join URL with `?pwd=...` |
+   | `ZOOM_MEETING_ID` | Meeting ID (e.g. `671 519 1656`) |
+   | `ZOOM_PASSWORD` | Meeting password |
+
+Connect your repo to Vercel — it runs `npm run build` on deploy (same script as local). Each push deploys.
 
 ---
 

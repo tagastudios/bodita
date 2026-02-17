@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
   var nombre = document.querySelector("#name");
   var email = document.querySelector("#email");
 
-  // Require config — never commit real credentials; use config.js (see config.example.js)
+  // Require config — generated at build from .env or Vercel env vars
   if (typeof window.APP_CONFIG === "undefined" || !window.APP_CONFIG.firebase) {
     console.warn(
-      "[Bodita] RSVP disabled: Create config.js from config.example.js and add your Firebase config."
+      "[Bodita] RSVP disabled: Run npm run build (requires .env with Firebase config)"
     );
     boton.style.opacity = "0.5";
     boton.style.pointerEvents = "none";

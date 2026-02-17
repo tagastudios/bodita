@@ -1,0 +1,14 @@
+{
+  "name": "bodita",
+  "version": "1.0.0",
+  "description": "Wedding website with Firebase RSVP and Zoom integration",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-config.js",
+    "vercel-build": "node scripts/build-config.js",
+    "dev": "npm run build && npx serve ."
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
