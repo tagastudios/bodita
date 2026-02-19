@@ -163,9 +163,7 @@ Connect your repo to Vercel — it runs `npm run build` on deploy (same script a
 
 ## License
 
-This project is shared for portfolio and reference.  
-Wedding content and images belong to the couple.  
-Third-party assets (e.g., Bootstrap, jQuery, icons) follow their respective licenses.
+Designed by [Taga Studios](https://tagastudios.com).
 
 ---
 
